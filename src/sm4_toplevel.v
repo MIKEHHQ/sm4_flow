@@ -1,62 +1,50 @@
 
-module sm4_toplevel #(parameter MODE = 0,                    /* 0: Encryptor, 1(>0): Decryptor */
-                      parameter ENABLE_FIXED_RK = 0,         /* 0: Encryptor, 1(>0): Decryptor */
-                      parameter [1023:0] FIXED_RK = 1024'h0)
-                     (input CLK_i,
-                      input RST_N_i,
-                      input [127:0] MK_i,
-                      input MK_VALID_i,
-                      input [127:0] DAT_i,
-                      input DAT_VALID_i,
-                      output [127:0] DAT_o,
-                      output DAT_READY_o);
+module sm4_toplevel (input CLK_i,
+                     input RST_N_i,
+                     input [127:0] MK_i,
+                     input MK_VALID_i,
+                     input [127:0] DAT_i,
+                     input DAT_VALID_i,
+                     output [127:0] DAT_o,
+                     output DAT_READY_o);
+    wire RK[31:0];
+    wire RK_ready[31:0];
+
+    wire [127:0] DAT [32:0];
+    wire DAT_VALID[32:0];
+
+    wire [127:0] MK [31:0];
+    wire MK_VALID[31:0];
     
-    wire RK_ready;
-    wire [1023:0] RK_pre, RK;
+    assign MK[0]        = MK_i;
+    assign MK_VALID[0]  = MK_VALID_i;
+    assign DAT[0]       = DAT_i;    
+    assign DAT_VALID[0] = DAT_VALID_i;
+
     genvar i;
-    
     /* key expand algorithm module */
     generate
-    if (ENABLE_FIXED_RK == 0)
+    for(i = 0;i<32;i = i+1)
     begin
-        keyexp KEYEXP(
+        keygen keygen(
         .CLK_i      (CLK_i),
         .RST_N_i    (RST_N_i),
-        .MK_i       (MK_i),
-        .MK_VALID_i (MK_VALID_i),
-        .RK_o       (RK_pre),
-        .RK_READY_o (RK_ready)
+        .MK_i       (MK[i]),
+        .MK_VALID_i (MK_VALID[i]),
+        .MK_o       (MK[i+1]),
+        .RK_o       (RK[i]),
+        .RK_READY_o (RK_ready[i])
+        );
+        mesenc mesenc(
+        .CLK_i      (CLK_i),
+        .RST_N_i    (RST_N_i),
+        .RK_i       (RK[i]),
+        .DAT_i      (DAT[i]),
+        .DAT_VALID_i(DAT_VALID[i] & RK_ready),
+        .DAT_o      (DAT_o),
+        .DAT_READY_o(DAT__VALID[i+1])
         );
     end
-    else
-    begin
-        assign RK_pre   = FIXED_RK;
-        assign RK_ready = 1'b1;
-    end
     endgenerate
-    
-    generate
-    if (MODE == 0)
-        assign RK = RK_pre;
-    else
-    begin
-        /* Decryptor: reserve order */
-        for(i = 0;i<32;i = i+1)
-        begin
-            assign RK[32*(i+1)-1:32*i] = RK_pre[32*(32-i)-1:32*(31-i)];
-        end
-    end
-    endgenerate
-    
-    /* main pipeline */
-    decenc DECENC(
-    .CLK_i       (CLK_i),
-    .RST_N_i     (RST_N_i),
-    .RK_i        (RK),
-    .DAT_i       (DAT_i),
-    .DAT_VALID_i (RK_ready & DAT_VALID_i),
-    .DAT_o       (DAT_o),
-    .DAT_READY_o (DAT_READY_o)
-    );
     
 endmodule
