@@ -16,10 +16,14 @@ module transform_for_key_exp (data_in,
     wire	[7:0]	byte_3_replaced;
     wire	[31:0]	word_replaced;
     
-    assign	{	byte_0,
-    byte_1,
-    byte_2,
-    byte_3}	 = 	data_in;
+//    assign	{	byte_0,
+//    byte_1,
+//    byte_2,
+//    byte_3}	 = 	data_in;
+    assign byte_0 = data_in[7:0];
+    assign byte_1 = data_in[15:8];
+    assign byte_2 = data_in[23:16];
+    assign byte_3 = data_in[31:24];
     
     assign	word_replaced	 = 	{	byte_0_replaced,
     byte_1_replaced,

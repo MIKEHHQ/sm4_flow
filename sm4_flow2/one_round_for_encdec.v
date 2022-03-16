@@ -16,7 +16,11 @@ module one_round_for_encdec(data_in,
     wire	[31:0]	data_for_transform;
     wire	[31:0]	data_after_transform;
     
-    assign { word_0, word_1, word_2, word_3} = data_in;
+//    assign { word_0, word_1, word_2, word_3} = data_in;
+    assign word_0 = data_in[7:0];
+    assign word_1 = data_in[15:8];
+    assign word_2 = data_in[23:16];
+    assign word_3 = data_in[31:24];
     
     assign	tmp_0				           = 	word_1 ^ word_2;
     assign	tmp_1				           = 	word_3 ^ round_key_in;

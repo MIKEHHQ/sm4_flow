@@ -59,7 +59,6 @@ module sm4_toplevel (input CLK_i,
     assign MK[0]  = {MK_i[32*(3+1)-1:32*3] ^ 32'hA3B1BAC6,MK_i[32*(2+1)-1:32*2] ^ 32'h56AA3350,
                      MK_i[32*(1+1)-1:32*1] ^ 32'h677D9197,MK_i[32*(0+1)-1:32*0] ^ 32'hB27022DC
     };
-    
     assign CK[0]  = 32'h00070E15, CK[1]  = 32'h1C232A31, CK[2]  = 32'h383F464D, CK[3]  = 32'h545B6269;
     assign CK[4]  = 32'h70777E85, CK[5]  = 32'h8C939AA1, CK[6]  = 32'hA8AFB6BD, CK[7]  = 32'hC4CBD2D9;
     assign CK[8]  = 32'hE0E7EEF5, CK[9]  = 32'hFC030A11, CK[10]  = 32'h181F262D, CK[11]  = 32'h343B4249;
