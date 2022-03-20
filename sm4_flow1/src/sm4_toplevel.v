@@ -45,13 +45,9 @@ module sm4_toplevel (input CLK_i,
         
         mesenc mesenc(
         .CLK_i      (CLK_i),
-        .RST_N_i    (RST_N_i),
         .RK_i       (RK[i]),
         .DAT_i      (DAT[i]),
-        .DAT_VALID_i(DAT_VALID[i]),
-        .DAT_o      (DAT[i+1]),
-        .DAT_READY_o(DAT_VALID[i+1])
-        
+        .DAT_o      (DAT[i+1])
         );
     end
     endgenerate

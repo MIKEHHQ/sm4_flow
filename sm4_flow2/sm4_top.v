@@ -1,6 +1,7 @@
 `timescale 1ns / 100ps
 
-module sm4_top(clk		,
+module sm4_top(
+    clk,
     reset_n	,
     sm4_enable_in,
     encdec_enable_in,
@@ -107,14 +108,14 @@ module sm4_top(clk		,
 
     key_expansion u_key
     (
-        .clk					(clk					),
-        .reset_n				(reset_n				),
+        .clk					(clk				),
+        .reset_n				(reset_n			),
         .sm4_enable_in		    (sm4_enable_in		),
         .encdec_sel_in		    (encdec_sel_in		),
         .enable_key_exp_in	    (enable_key_exp_in	),
-        .user_key_in			(user_key_in			),
+        .user_key_in			(user_key_in		),
         .user_key_valid_in	    (user_key_valid_in	),
-        .key_exp_finished_out   (key_exp_ready_out),
+        .key_exp_finished_out   (key_exp_ready_out  ),
         .rk00_out			    (rk_00    			),
         .rk01_out			    (rk_01    			),
         .rk02_out			    (rk_02    			),

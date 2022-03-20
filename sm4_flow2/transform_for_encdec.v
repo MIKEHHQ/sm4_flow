@@ -18,12 +18,12 @@ module transform_for_encdec(data_in,
     wire	[31:0]	data_after_linear_key;
 
     //    assign	{ byte_0, byte_1, byte_2, byte_3 } = data_in;
-    assign byte_0 = data_in[7:0];
-    assign byte_1 = data_in[15:8];
-    assign byte_2 = data_in[23:16];
-    assign byte_3 = data_in[31:24];
+    assign byte_3 = data_in[7:0];  
+    assign byte_2 = data_in[15:8]; 
+    assign byte_1 = data_in[23:16]; 
+    assign byte_0 = data_in[31:24];
 
-    assign	word_replaced                      = {byte_0_replaced, byte_1_replaced, byte_2_replaced,byte_3_replaced};
+    assign	word_replaced = {byte_0_replaced, byte_1_replaced, byte_2_replaced,byte_3_replaced};
 
     sbox_replace	u_0
     (

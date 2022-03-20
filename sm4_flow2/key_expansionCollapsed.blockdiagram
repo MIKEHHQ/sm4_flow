@@ -1,0 +1,3 @@
+diagram work.key_expansion {
+	def wire group 1109159169ToArchitectureBus (rk00_out, rk01_out, rk02_out, rk03_out, rk04_out, rk05_out, rk06_out, rk07_out, rk08_out, rk09_out, rk10_out, rk11_out, rk12_out, rk13_out, rk14_out, rk15_out, rk16_out, rk17_out, rk18_out, rk19_out, rk20_out, rk21_out, rk22_out, rk23_out, rk24_out, rk25_out, rk26_out, rk27_out, rk28_out, rk29_out, rk30_out, rk31_out)
+}

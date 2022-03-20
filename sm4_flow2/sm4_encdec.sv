@@ -41,8 +41,8 @@ module sm4_encdec(clk,
     rk_31_in,
     ready_out,
     result_out);
-    input			 clk		        ;
-    input			 reset_n	        ;
+    input            clk                ;
+    input            reset_n            ;
     input            sm4_enable_in      ;
     input            encdec_enable_in   ;
     input            key_exp_ready_in   ;
@@ -157,47 +157,78 @@ module sm4_encdec(clk,
     wire    [127 : 0] result_30         ;
     wire    [127 : 0] result_31         ;
 
-    reg     [1   : 0] current           ;
-    reg     [1   : 0] next              ;
-    
-    `define IDLE                2'b00
-    `define WAITING_FOR_KEY     2'b01
-    `define ENCRYPTION          2'b10
-    
+    //    reg     [1   : 0] current           ;
+    //    reg     [1   : 0] next              ;
+
+    //    `define IDLE                2'b00
+    //    `define WAITING_FOR_KEY     2'b01
+    //    `define ENCRYPTION          2'b10
+
+    //    always@(posedge clk or negedge reset_n)
+    //        if (!reset_n)
+    //            current <= `IDLE;
+    //        else if (sm4_enable_in)
+    //            current <= next;
+
+    //    always@(*)
+    //    begin
+    //        next = `IDLE;
+    //        case(current)
+    //            `IDLE :
+    //            if (sm4_enable_in && encdec_enable_in)
+    //                next = `WAITING_FOR_KEY;
+    //            else
+    //                next = `IDLE;
+    //                `WAITING_FOR_KEY :
+    //                if (key_exp_ready_in)
+    //                    next = `ENCRYPTION;
+    //                else
+    //                    next = `WAITING_FOR_KEY;
+    //                    `ENCRYPTION :
+    //                    if (!encdec_enable_in || !sm4_enable_in)
+    //                        next = `IDLE;
+    //                    else
+    //                        next = `ENCRYPTION;
+    //                        default :
+    //                        next = `IDLE;
+    //                        endcase
+    //        end
+    typedef enum {WAITING_FOR_KEY, IDLE, ENCRYPTION} encdec_states;
+    encdec_states next,current;
     always@(posedge clk or negedge reset_n)
     if (!reset_n)
-        current <= `IDLE;
+        current <= IDLE;
     else if (sm4_enable_in)
         current <= next;
 
     always@(*)
     begin
-        next = `IDLE;
+        current = IDLE;
         case(current)
-            `IDLE :
+            IDLE :
             if (sm4_enable_in && encdec_enable_in)
-                next = `WAITING_FOR_KEY;
+                next = WAITING_FOR_KEY;
             else
-                next = `IDLE;
-            `WAITING_FOR_KEY :
+                next = IDLE;
+            WAITING_FOR_KEY :
             if (key_exp_ready_in)
-                next = `ENCRYPTION;
+                next = ENCRYPTION;
             else
-                next = `WAITING_FOR_KEY;
-            `ENCRYPTION :
+                next = WAITING_FOR_KEY;
+            ENCRYPTION :
             if (!encdec_enable_in || !sm4_enable_in)
-                next = `IDLE;
+                next = IDLE;
             else
-                next = `ENCRYPTION;
+                next = ENCRYPTION;
             default :
-            next = `IDLE;
+            next = IDLE;
         endcase
     end
 
     always@(posedge clk or negedge reset_n)
     if (!reset_n)
         reg_tmp <= 32'b0;
-    else if (current == `ENCRYPTION && valid_in)
+    else if (current == ENCRYPTION && valid_in)
         reg_tmp <= {reg_tmp[30 : 0], 1'b1};
     else
         reg_tmp <= {reg_tmp[30 : 0], 1'b0};
@@ -239,10 +270,10 @@ module sm4_encdec(clk,
     one_round_for_encdec u_31 (.data_in(reg_result_30), .round_key_in(rk_31_in), .result_out(result_31));
 
     //    assign { word_0, word_1, word_2, word_3} = result_31;
-    assign word_0 = result_31[7:0];
-    assign word_1 = result_31[15:8];
-    assign word_2 = result_31[23:16];
-    assign word_3 = result_31[31:24];
+    assign word_3 = result_31[31:0];
+    assign word_2 = result_31[63:32];
+    assign word_1 = result_31[95:64];
+    assign word_0 = result_31[127:96];
     assign reversed_result_31                = {word_3, word_2, word_1, word_0};
 
     always@(posedge clk or negedge reset_n) if (!reset_n) reg_result_00 <= 128'h0; else reg_result_00 <= result_00;
